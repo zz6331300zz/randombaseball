@@ -1,69 +1,91 @@
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.Set;
+package week02;
 
+import java.util.Scanner;
 
 public class randombaseball {
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        Random random = new Random();
-        Set<Integer> numberSet = new HashSet<>();
-        int[] computerNumbers = new int[3];
+        int comFirstNum = (int) (Math.random() * 10);
+        int comSecondNum = (int) (Math.random() * 10);
+        if (comFirstNum == comSecondNum) {
+            while (comFirstNum == comSecondNum) {
+                comSecondNum = (int) (Math.random() * 10);
+            }
+        }
+        int comThirdNum = (int) (Math.random() * 10);
+        if ((comThirdNum == comFirstNum) || (comThirdNum == comSecondNum)) {
+            while (true) {
+                if((comThirdNum != comFirstNum) && (comThirdNum != comSecondNum)){
+                    break;
+                }
+                comThirdNum = (int) (Math.random() * 10);
+            }
+        }
+        int computerNum = comFirstNum * 100 + comSecondNum * 10 + comThirdNum;
+        computerNum=76;
+        comFirstNum=0;
+        comSecondNum=7;
+        comThirdNum=6;
+        System.out.println(computerNum);
 
-        // 컴퓨터의 숫자 생성
-        while (numberSet.size() < 3) {
-            int randomNumber = random.nextInt(10);
-            numberSet.add(randomNumber);
+        Number[] comNumber = new Number[3];
+        Number[] userNumber = new Number[3];
+        for(int i=0; i<comNumber.length;i++){
+            comNumber[i] = new Number();
+        }
+        for(int i=0; i<userNumber.length;i++){
+            userNumber[i] = new Number();
         }
 
-        int index = 0;
-        for (Integer num : numberSet) {
-            computerNumbers[index++] = num;
-        }
+        comNumber[0].num = comFirstNum;
+        comNumber[1].num = comSecondNum;
+        comNumber[2].num = comThirdNum;
+        comNumber[0].digit = 0;
+        comNumber[1].digit = 1;
+        comNumber[2].digit = 2;
 
-        System.out.println("컴퓨터가 숫자를 선택했습니다. 0과 9 사이의 서로 다른 숫자 3개를 맞춰보세요!");
+        boolean flag = true;
+        int userNum = 0;
+        int userUnitsNum = 0;
+        int userTensNum = 0;
+        int userHundredsNum = 0;
+        Scanner sc = new Scanner(System.in);
+        System.out.println("컴퓨터가 숫자를 생성하였습니다. 답을 맞춰보세요!");
+        int tryNum = 0;
+        while (flag == true) {
+            System.out.print(tryNum++ + 1 + "번째 시도 : ");
+            int ballCnt = 0;
+            int strikeCnt = 0;
+            userNum = sc.nextInt();
+            userHundredsNum = userNum / 100;
+            userTensNum = (userNum / 10) % 10;
+            userUnitsNum = userNum % 10;
 
-        int attempts = 0;
+            userNumber[0].num = userHundredsNum;
+            userNumber[1].num = userTensNum;
+            userNumber[2].num = userUnitsNum;
+            userNumber[0].digit = 0;
+            userNumber[1].digit = 1;
+            userNumber[2].digit = 2;
 
-        while (true) {
-            attempts++;
-            System.out.print("세 자리 숫자를 입력하세요: ");
-            String userInput = scanner.nextLine();
-
-            // 입력값 검증
-            if (userInput.length() != 3 || !userInput.matches("[0-9]+")) {
-                System.out.println("잘못된 입력입니다. 0과 9 사이의 서로 다른 세 자리 숫자를 입력하세요.");
-                continue;
-            }
-
-            // 문자열을 정수 배열로 변환
-            int[] userNumbers = new int[3];
-            for (int i = 0; i < 3; i++) {
-                userNumbers[i] = Character.getNumericValue(userInput.charAt(i));
-            }
-
-            // 스트라이크와 볼 계산
-            int strikes = 0;
-            int balls = 0;
-            for (int i = 0; i < 3; i++) {
-                if (userNumbers[i] == computerNumbers[i]) {
-                    strikes++;
-                } else if (numberSet.contains(userNumbers[i])) {
-                    balls++;
+            for(int i=0;i<3;i++) {
+                for (int j = 0; j < 3; j++) {
+                    if(userNumber[i].num==comNumber[j].num){
+                        if(userNumber[i].digit==comNumber[j].digit) {
+                            strikeCnt++;
+                        }
+                        else{
+                            ballCnt++;
+                        }
+                    }
                 }
             }
-
-            // 피드백 제공
-            System.out.println(strikes + "S " + balls + "B");
-
-            // 정답 여부 확인
-            if (strikes == 3) {
-                System.out.println("축하합니다! " + attempts + "번 만에 맞추셨습니다.");
-                break;
+            if(strikeCnt==3){
+                flag=false;
             }
+            System.out.println(ballCnt+"B"+strikeCnt+"S");
         }
+        System.out.println(tryNum+"번만에 맞히셨습니다.");
 
-        scanner.close();
     }
 }
